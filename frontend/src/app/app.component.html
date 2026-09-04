@@ -1,138 +1,195 @@
-<div class="login-screen" *ngIf="!loggedIn">
-  <div class="login-card">
-    <div class="logo-box">JA</div>
-    <div class="eyebrow">JAVA + ANGULAR</div>
-    <h1>Web Admin</h1>
-    <p class="muted">Panel administrativo conectado a una API Spring Boot.</p>
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>
 
-    <form (ngSubmit)="login()" class="login-form">
-      <label>Usuario<input [(ngModel)]="username" name="username" required></label>
-      <label>Contraseña<input [(ngModel)]="password" name="password" type="password" required></label>
-      <div class="error" *ngIf="message">{{ message }}</div>
-      <button class="primary wide" type="submit" [disabled]="loading">{{ loading ? 'Ingresando...' : 'Ingresar' }}</button>
-    </form>
-    <div class="demo-box"><strong>Demo:</strong> admin / 123123</div>
+<div class="login-page" *ngIf="!loggedIn">
+  <div class="login-layout">
+    <section class="login-showcase">
+      <div class="brand-row">
+        <div class="brand-symbol">IA</div>
+        <div><strong>Admin Institucional</strong><span>Plataforma de Gestión</span></div>
+      </div>
+
+      <div class="showcase-copy">
+        <span class="showcase-chip"><i class="pi pi-shield"></i> Plataforma segura</span>
+        <h1>Gestión institucional <em>moderna y eficiente.</em></h1>
+        <p>Centraliza información, usuarios, inventario y operaciones en una experiencia moderna construida con Angular y Spring Boot.</p>
+        <div class="feature-list">
+          <span><i class="pi pi-check"></i> Angular + Spring Boot</span>
+          <span><i class="pi pi-check"></i> API REST empresarial</span>
+          <span><i class="pi pi-check"></i> Persistencia MySQL</span>
+        </div>
+      </div>
+
+      <div class="showcase-foot"><span>Sistema administrativo</span><span>v2.0</span></div>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-card">
+        <div class="login-mobile-brand"><div class="brand-symbol">IA</div><strong>Admin Institucional</strong></div>
+        <span class="eyebrow">ACCESO AL SISTEMA</span>
+        <h2>Bienvenido</h2>
+        <p class="muted">Ingresa tus credenciales para continuar.</p>
+
+        <form (ngSubmit)="login()" class="login-form">
+          <label>Usuario
+            <div class="input-icon"><i class="pi pi-user"></i><input pInputText [(ngModel)]="username" name="username" required></div>
+          </label>
+          <label>Contraseña
+            <div class="input-icon"><i class="pi pi-lock"></i><input pInputText [(ngModel)]="password" name="password" type="password" required></div>
+          </label>
+          <div class="login-error" *ngIf="message"><i class="pi pi-exclamation-circle"></i>{{ message }}</div>
+          <p-button label="Ingresar al sistema" icon="pi pi-arrow-right" iconPos="right" styleClass="login-button" [loading]="loading" type="submit"></p-button>
+        </form>
+
+        <div class="demo-box"><i class="pi pi-info-circle"></i><div><span>Credenciales demo</span><strong>admin / 123123</strong></div></div>
+      </div>
+    </section>
   </div>
 </div>
 
-<div class="shell" *ngIf="loggedIn">
-  <aside class="sidebar" [class.open]="mobileMenu">
-    <div class="brand">
-      <div class="logo-box small">JA</div>
-      <div><strong>Web Admin</strong><span>Spring + Angular</span></div>
+<div class="app-shell" [class.sidebar-collapsed]="sidebarCollapsed" *ngIf="loggedIn">
+  <aside class="sidebar" [class.mobile-open]="mobileMenu">
+    <div class="sidebar-brand">
+      <div class="brand-symbol small">IA</div>
+      <div class="brand-copy"><strong>Admin Institucional</strong><span>Gestión Empresarial</span></div>
     </div>
-    <nav>
-      <button [class.active]="currentView === 'dashboard'" (click)="navigate('dashboard')">⌂ <span>Dashboard</span></button>
-      <button [class.active]="currentView === 'users'" (click)="navigate('users')">◎ <span>Usuarios</span></button>
-      <button [class.active]="currentView === 'products'" (click)="navigate('products')">□ <span>Productos</span></button>
-    </nav>
-    <button class="logout" (click)="logout()">↪ <span>Cerrar sesión</span></button>
+
+    <div class="sidebar-group">
+      <span class="sidebar-caption">PRINCIPAL</span>
+      <nav>
+        <button [class.active]="currentView === 'dashboard'" (click)="navigate('dashboard')"><i class="pi pi-home"></i><span>Dashboard</span></button>
+        <button [class.active]="currentView === 'users'" (click)="navigate('users')"><i class="pi pi-users"></i><span>Usuarios</span><small>{{ users.length }}</small></button>
+        <button [class.active]="currentView === 'products'" (click)="navigate('products')"><i class="pi pi-box"></i><span>Productos</span><small>{{ products.length }}</small></button>
+      </nav>
+    </div>
+
+    <div class="sidebar-group secondary">
+      <span class="sidebar-caption">SISTEMA</span>
+      <nav>
+        <button><i class="pi pi-chart-bar"></i><span>Reportes</span></button>
+        <button><i class="pi pi-cog"></i><span>Configuración</span></button>
+      </nav>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-user"><div class="avatar">A</div><div class="sidebar-user-copy"><strong>Administrador</strong><span>admin</span></div></div>
+      <button class="logout" (click)="logout()"><i class="pi pi-sign-out"></i><span>Cerrar sesión</span></button>
+    </div>
+
+    <button class="sidebar-toggle" (click)="toggleSidebar()" type="button"><i class="pi" [class.pi-angle-left]="!sidebarCollapsed" [class.pi-angle-right]="sidebarCollapsed"></i></button>
   </aside>
 
-  <main>
-    <header>
-      <div class="header-left">
-        <button class="menu" (click)="mobileMenu = !mobileMenu">☰</button>
+  <main class="app-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu" (click)="mobileMenu = !mobileMenu" type="button"><i class="pi pi-bars"></i></button>
         <div>
-          <h2>{{ currentView === 'dashboard' ? 'Dashboard' : currentView === 'users' ? 'Usuarios' : 'Productos' }}</h2>
-          <p>{{ currentView === 'dashboard' ? 'Resumen general del sistema' : currentView === 'users' ? 'Gestión de accesos' : 'Catálogo e inventario' }}</p>
+          <div class="breadcrumb"><span>Sistema</span><i class="pi pi-angle-right"></i><strong>{{ pageTitle }}</strong></div>
+          <h2>{{ pageTitle }}</h2><p>{{ pageSubtitle }}</p>
         </div>
       </div>
-      <div class="profile"><div class="avatar">A</div><div><strong>Administrador</strong><span>admin</span></div></div>
+      <div class="topbar-actions">
+        <button class="icon-button"><i class="pi pi-search"></i></button>
+        <button class="icon-button notification"><i class="pi pi-bell"></i><span></span></button>
+        <div class="divider"></div>
+        <div class="profile"><div class="avatar">A</div><div><strong>Administrador</strong><span>Administrador del sistema</span></div><i class="pi pi-angle-down"></i></div>
+      </div>
     </header>
 
-    <section class="content" *ngIf="currentView === 'dashboard'">
-      <div class="stats">
-        <article><span>Usuarios</span><strong>{{ users.length }}</strong><small>registrados</small></article>
-        <article><span>Productos</span><strong>{{ products.length }}</strong><small>registrados</small></article>
-        <article><span>Stock total</span><strong>{{ totalStock }}</strong><small>unidades</small></article>
-        <article><span>Inventario</span><strong>S/ {{ inventoryValue | number:'1.2-2' }}</strong><small>valor estimado</small></article>
+    <section class="page-content" *ngIf="currentView === 'dashboard'">
+      <section class="welcome-card">
+        <div><span class="welcome-chip"><i class="pi pi-sparkles"></i> Panel de gestión</span><h1>Bienvenido, Administrador</h1><p>Supervisa la información principal y accede rápidamente a las operaciones del sistema.</p></div>
+        <div class="system-status"><span></span>Sistema operativo</div>
+      </section>
+
+      <div class="stats-grid">
+        <article class="metric-card"><div class="metric-head"><div class="metric-icon blue"><i class="pi pi-users"></i></div><span>Activos</span></div><div class="metric-body"><small>Usuarios</small><strong>{{ users.length }}</strong><p>{{ activeUsers }} usuarios activos</p></div></article>
+        <article class="metric-card"><div class="metric-head"><div class="metric-icon violet"><i class="pi pi-box"></i></div><span>Catálogo</span></div><div class="metric-body"><small>Productos</small><strong>{{ products.length }}</strong><p>{{ lowStockProducts }} con stock bajo</p></div></article>
+        <article class="metric-card"><div class="metric-head"><div class="metric-icon amber"><i class="pi pi-database"></i></div><span>Inventario</span></div><div class="metric-body"><small>Stock total</small><strong>{{ totalStock }}</strong><p>unidades disponibles</p></div></article>
+        <article class="metric-card"><div class="metric-head"><div class="metric-icon green"><i class="pi pi-wallet"></i></div><span>Valorizado</span></div><div class="metric-body"><small>Valor inventario</small><strong class="money">S/ {{ inventoryValue | number:'1.2-2' }}</strong><p>valor estimado</p></div></article>
       </div>
 
       <div class="dashboard-grid">
-        <article class="panel">
-          <div class="panel-title"><div><h3>Arquitectura activa</h3><p>Este demo sí usa backend Java.</p></div></div>
+        <article class="panel architecture-panel">
+          <div class="panel-head"><div><span class="eyebrow">INFRAESTRUCTURA</span><h3>Arquitectura del sistema</h3><p>Componentes principales de la plataforma.</p></div><span class="online"><i class="pi pi-circle-fill"></i> Online</span></div>
           <div class="architecture">
-            <div><b>Angular</b><span>Frontend</span></div><i>→</i><div><b>Spring Boot</b><span>API REST</span></div><i>→</i><div><b>JPA</b><span>Persistencia</span></div><i>→</i><div><b>MySQL</b><span>Producción</span></div>
+            <div><i class="pi pi-desktop tech angular"></i><section><strong>Angular</strong><span>Frontend</span></section></div><i class="pi pi-arrow-right arrow"></i>
+            <div><i class="pi pi-server tech spring"></i><section><strong>Spring Boot</strong><span>API REST</span></section></div><i class="pi pi-arrow-right arrow"></i>
+            <div><i class="pi pi-sync tech jpa"></i><section><strong>JPA</strong><span>Persistencia</span></section></div><i class="pi pi-arrow-right arrow"></i>
+            <div><i class="pi pi-database tech mysql"></i><section><strong>MySQL</strong><span>Base de datos</span></section></div>
           </div>
         </article>
+
         <article class="panel">
-          <div class="panel-title"><div><h3>Acciones rápidas</h3><p>Gestiona registros reales vía API.</p></div></div>
+          <div class="panel-head"><div><span class="eyebrow">ACCIONES</span><h3>Accesos rápidos</h3><p>Operaciones frecuentes.</p></div></div>
           <div class="quick-actions">
-            <button (click)="navigate('users'); openUser()">+ Nuevo usuario</button>
-            <button (click)="navigate('products'); openProduct()">+ Nuevo producto</button>
+            <button (click)="navigate('users'); openUser()"><i class="pi pi-user-plus"></i><div><strong>Nuevo usuario</strong><span>Registrar acceso</span></div><i class="pi pi-arrow-right"></i></button>
+            <button (click)="navigate('products'); openProduct()"><i class="pi pi-plus"></i><div><strong>Nuevo producto</strong><span>Añadir al catálogo</span></div><i class="pi pi-arrow-right"></i></button>
           </div>
         </article>
       </div>
-    </section>
 
-    <section class="content" *ngIf="currentView === 'users'">
-      <article class="panel">
-        <div class="panel-title actions-title">
-          <div><h3>Usuarios</h3><p>CRUD conectado a Spring Boot.</p></div>
-          <button class="primary" (click)="openUser()">+ Nuevo usuario</button>
-        </div>
-        <input class="search" [(ngModel)]="userSearch" placeholder="Buscar usuario...">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
-            <tbody>
-              <tr *ngFor="let user of filteredUsers">
-                <td><b>{{ user.name }}</b></td><td>{{ user.username }}</td><td>{{ user.role }}</td>
-                <td><span class="status" [class.off]="!user.active">{{ user.active ? 'Activo' : 'Inactivo' }}</span></td>
-                <td class="right"><button class="soft" (click)="openUser(user)">Editar</button><button class="danger" (click)="deleteUser(user)">Eliminar</button></td>
-              </tr>
-            </tbody>
-          </table>
+      <article class="panel stock-panel">
+        <div class="panel-head"><div><span class="eyebrow">INVENTARIO</span><h3>Productos con menor stock</h3><p>Información relevante para reposición.</p></div><button class="text-link" (click)="navigate('products')">Ver todos <i class="pi pi-arrow-right"></i></button></div>
+        <div class="stock-list">
+          <div class="stock-row" *ngFor="let product of lowStockList">
+            <div class="product-avatar">{{ product.name.charAt(0) }}</div><div class="stock-name"><strong>{{ product.name }}</strong><span>{{ product.category }}</span></div><div class="stock-price">S/ {{ product.price | number:'1.2-2' }}</div><span class="stock-badge" [class.danger]="product.stock <= 5">{{ product.stock }} unidades</span>
+          </div>
         </div>
       </article>
     </section>
 
-    <section class="content" *ngIf="currentView === 'products'">
+    <section class="page-content" *ngIf="currentView === 'users'">
       <article class="panel">
-        <div class="panel-title actions-title">
-          <div><h3>Productos</h3><p>Datos servidos por la API Java.</p></div>
-          <button class="primary" (click)="openProduct()">+ Nuevo producto</button>
-        </div>
-        <input class="search" [(ngModel)]="productSearch" placeholder="Buscar producto...">
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th></th></tr></thead>
-            <tbody>
-              <tr *ngFor="let product of filteredProducts">
-                <td><b>{{ product.name }}</b></td><td>{{ product.category }}</td><td>S/ {{ product.price | number:'1.2-2' }}</td><td>{{ product.stock }}</td>
-                <td class="right"><button class="soft" (click)="openProduct(product)">Editar</button><button class="danger" (click)="deleteProduct(product)">Eliminar</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="resource-head"><div><span class="eyebrow">ADMINISTRACIÓN</span><h3>Gestión de usuarios</h3><p>Administra usuarios, roles y estados de acceso.</p></div><p-button label="Nuevo usuario" icon="pi pi-plus" (onClick)="openUser()"></p-button></div>
+        <div class="toolbar"><div class="search"><i class="pi pi-search"></i><input pInputText [(ngModel)]="userSearch" placeholder="Buscar por nombre, usuario o rol"></div><span><strong>{{ filteredUsers.length }}</strong> registros</span></div>
+        <p-table [value]="filteredUsers" [paginator]="true" [rows]="8" [rowsPerPageOptions]="[8,15,25]" styleClass="premium-table" responsiveLayout="scroll">
+          <ng-template pTemplate="header"><tr><th>Usuario</th><th>Cuenta</th><th>Rol</th><th>Estado</th><th class="actions-col">Acciones</th></tr></ng-template>
+          <ng-template pTemplate="body" let-user><tr>
+            <td><div class="table-user"><div class="table-avatar">{{ user.name.charAt(0).toUpperCase() }}</div><div><strong>{{ user.name }}</strong><span>Usuario del sistema</span></div></div></td>
+            <td><span class="mono">@{{ user.username }}</span></td><td><span class="role-badge">{{ user.role }}</span></td>
+            <td><span class="status-pill" [class.off]="!user.active"><i></i>{{ user.active ? 'Activo' : 'Inactivo' }}</span></td>
+            <td class="actions-col"><button class="table-action" (click)="openUser(user)"><i class="pi pi-pencil"></i></button><button class="table-action danger-action" (click)="deleteUser(user)"><i class="pi pi-trash"></i></button></td>
+          </tr></ng-template>
+          <ng-template pTemplate="emptymessage"><tr><td colspan="5" class="empty"><i class="pi pi-users"></i><strong>Sin resultados</strong><span>No encontramos usuarios.</span></td></tr></ng-template>
+        </p-table>
+      </article>
+    </section>
+
+    <section class="page-content" *ngIf="currentView === 'products'">
+      <article class="panel">
+        <div class="resource-head"><div><span class="eyebrow">INVENTARIO</span><h3>Catálogo de productos</h3><p>Administra productos, precios y existencias.</p></div><p-button label="Nuevo producto" icon="pi pi-plus" (onClick)="openProduct()"></p-button></div>
+        <div class="toolbar"><div class="search"><i class="pi pi-search"></i><input pInputText [(ngModel)]="productSearch" placeholder="Buscar producto o categoría"></div><span><strong>{{ filteredProducts.length }}</strong> registros</span></div>
+        <p-table [value]="filteredProducts" [paginator]="true" [rows]="8" [rowsPerPageOptions]="[8,15,25]" styleClass="premium-table" responsiveLayout="scroll">
+          <ng-template pTemplate="header"><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th class="actions-col">Acciones</th></tr></ng-template>
+          <ng-template pTemplate="body" let-product><tr>
+            <td><div class="table-user"><div class="table-avatar product">{{ product.name.charAt(0).toUpperCase() }}</div><div><strong>{{ product.name }}</strong><span>Producto registrado</span></div></div></td>
+            <td><span class="category-badge">{{ product.category }}</span></td><td><strong>S/ {{ product.price | number:'1.2-2' }}</strong></td><td><span class="stock-badge" [class.danger]="product.stock <= 5">{{ product.stock }} unidades</span></td>
+            <td class="actions-col"><button class="table-action" (click)="openProduct(product)"><i class="pi pi-pencil"></i></button><button class="table-action danger-action" (click)="deleteProduct(product)"><i class="pi pi-trash"></i></button></td>
+          </tr></ng-template>
+          <ng-template pTemplate="emptymessage"><tr><td colspan="5" class="empty"><i class="pi pi-box"></i><strong>Sin resultados</strong><span>No encontramos productos.</span></td></tr></ng-template>
+        </p-table>
       </article>
     </section>
   </main>
 </div>
 
-<div class="modal-backdrop" *ngIf="userModal">
-  <div class="modal">
-    <div class="modal-head"><div><h3>{{ editingUser ? 'Editar usuario' : 'Nuevo usuario' }}</h3><p>El registro se guardará mediante la API Java.</p></div><button (click)="userModal=false">×</button></div>
-    <form (ngSubmit)="saveUser()" class="form">
-      <label>Nombre<input [(ngModel)]="userForm.name" name="name" required></label>
-      <label>Usuario<input [(ngModel)]="userForm.username" name="username" required></label>
-      <label>Rol<select [(ngModel)]="userForm.role" name="role"><option>ADMIN</option><option>OPERADOR</option><option>CONSULTA</option></select></label>
-      <label>Estado<select [(ngModel)]="userForm.active" name="active"><option [ngValue]="true">Activo</option><option [ngValue]="false">Inactivo</option></select></label>
-      <div class="modal-actions"><button type="button" class="soft" (click)="userModal=false">Cancelar</button><button class="primary">Guardar</button></div>
-    </form>
-  </div>
-</div>
+<p-dialog [(visible)]="userModal" [modal]="true" [draggable]="false" [resizable]="false" [style]="{ width: '520px' }" [breakpoints]="{ '700px': '94vw' }">
+  <ng-template pTemplate="header"><div class="dialog-head"><div class="dialog-icon"><i class="pi pi-user"></i></div><div><h3>{{ editingUser ? 'Editar usuario' : 'Nuevo usuario' }}</h3><p>Información de acceso al sistema.</p></div></div></ng-template>
+  <form class="premium-form" (ngSubmit)="saveUser()">
+    <label>Nombre completo<input pInputText [(ngModel)]="userForm.name" name="name" placeholder="Ej. Juan Pérez" required></label>
+    <label>Nombre de usuario<input pInputText [(ngModel)]="userForm.username" name="username" placeholder="Ej. jperez" required></label>
+    <div class="form-grid"><label>Rol<p-select [(ngModel)]="userForm.role" name="role" [options]="roles" appendTo="body"></p-select></label><label>Estado<p-select [(ngModel)]="userForm.active" name="active" [options]="statusOptions" optionLabel="label" optionValue="value" appendTo="body"></p-select></label></div>
+    <div class="dialog-actions"><p-button label="Cancelar" severity="secondary" [outlined]="true" type="button" (onClick)="userModal=false"></p-button><p-button label="Guardar usuario" icon="pi pi-check" type="submit"></p-button></div>
+  </form>
+</p-dialog>
 
-<div class="modal-backdrop" *ngIf="productModal">
-  <div class="modal">
-    <div class="modal-head"><div><h3>{{ editingProduct ? 'Editar producto' : 'Nuevo producto' }}</h3><p>El registro se guardará mediante la API Java.</p></div><button (click)="productModal=false">×</button></div>
-    <form (ngSubmit)="saveProduct()" class="form">
-      <label>Producto<input [(ngModel)]="productForm.name" name="name" required></label>
-      <label>Categoría<input [(ngModel)]="productForm.category" name="category" required></label>
-      <label>Precio<input [(ngModel)]="productForm.price" name="price" type="number" min="0" step="0.01" required></label>
-      <label>Stock<input [(ngModel)]="productForm.stock" name="stock" type="number" min="0" required></label>
-      <div class="modal-actions"><button type="button" class="soft" (click)="productModal=false">Cancelar</button><button class="primary">Guardar</button></div>
-    </form>
-  </div>
-</div>
+<p-dialog [(visible)]="productModal" [modal]="true" [draggable]="false" [resizable]="false" [style]="{ width: '520px' }" [breakpoints]="{ '700px': '94vw' }">
+  <ng-template pTemplate="header"><div class="dialog-head"><div class="dialog-icon"><i class="pi pi-box"></i></div><div><h3>{{ editingProduct ? 'Editar producto' : 'Nuevo producto' }}</h3><p>Información del catálogo e inventario.</p></div></div></ng-template>
+  <form class="premium-form" (ngSubmit)="saveProduct()">
+    <label>Nombre del producto<input pInputText [(ngModel)]="productForm.name" name="productName" required></label>
+    <label>Categoría<input pInputText [(ngModel)]="productForm.category" name="category" required></label>
+    <div class="form-grid"><label>Precio<input pInputText [(ngModel)]="productForm.price" name="price" type="number" min="0" step="0.01" required></label><label>Stock<input pInputText [(ngModel)]="productForm.stock" name="stock" type="number" min="0" required></label></div>
+    <div class="dialog-actions"><p-button label="Cancelar" severity="secondary" [outlined]="true" type="button" (onClick)="productModal=false"></p-button><p-button label="Guardar producto" icon="pi pi-check" type="submit"></p-button></div>
+  </form>
+</p-dialog>
